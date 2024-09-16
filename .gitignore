@@ -1,0 +1,3 @@
+unencrypted
+.sops.yaml
+*.agekey
