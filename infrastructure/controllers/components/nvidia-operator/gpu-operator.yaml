@@ -49,3 +49,5 @@ spec:
           value: "true"
         - name: NVIDIA_DISABLE_REQUIRE
           value: "true"
+        - name: DISABLE_DEV_CHAR_SYMLINK_CREATION
+          value: "true"
