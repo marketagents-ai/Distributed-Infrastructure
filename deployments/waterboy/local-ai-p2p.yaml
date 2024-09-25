@@ -29,6 +29,7 @@ spec:
         app: local-ai-p2p
       name: local-ai-p2p
     spec:
+      hostNetwork: true
       runtimeClassName: "nvidia"
       containers:
         - args:
@@ -71,6 +72,7 @@ spec:
         app: local-ai-p2p-2
       name: local-ai-p2p-2
     spec:
+      hostNetwork: true
       runtimeClassName: "nvidia"
       containers:
         - args:
