@@ -1,0 +1,96 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: models-pvc-p2p
+  namespace: local-ai
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 50Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: local-ai-p2p
+  namespace: local-ai
+  labels:
+    app: local-ai-p2p
+spec:
+  selector:
+    matchLabels:
+      app: local-ai-p2p
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: local-ai-p2p
+      name: local-ai-p2p
+    spec:
+      runtimeClassName: "nvidia"
+      containers:
+        - args:
+          - hermes-3-llama-3.1-8b:vllm
+          env:
+          - name: ADDRESS
+            value: ":9091"
+          envFrom:
+          - secretRef:
+              name: env-secrets-p2p
+          name: local-ai
+          image: quay.io/go-skynet/local-ai:master-cublas-cuda12
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              nvidia.com/gpu: 1
+          volumeMounts:
+            - name: models-volume
+              mountPath: /build/models
+      volumes:
+        - name: models-volume
+          persistentVolumeClaim:
+            claimName: models-pvc-p2p
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: local-ai-p2p-2
+  namespace: local-ai
+  labels:
+    app: local-ai-p2p-2
+spec:
+  selector:
+    matchLabels:
+      app: local-ai-p2p-2
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: local-ai-p2p-2
+      name: local-ai-p2p-2
+    spec:
+      runtimeClassName: "nvidia"
+      containers:
+        - args:
+          - hermes-3-llama-3.1-8b:vllm
+          env:
+          - name: ADDRESS
+            value: ":9092"
+          envFrom:
+          - secretRef:
+              name: env-secrets-p2p
+          name: local-ai
+          image: quay.io/go-skynet/local-ai:master-cublas-cuda12
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              nvidia.com/gpu: 1
+          volumeMounts:
+            - name: models-volume
+              mountPath: /build/models
+      volumes:
+        - name: models-volume
+          persistentVolumeClaim:
+            claimName: models-pvc-p2p
