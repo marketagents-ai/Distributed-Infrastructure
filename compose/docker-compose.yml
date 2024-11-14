@@ -1,0 +1,99 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  # TODO set up LiteLLM docker image
+
+  # vLLM Instance 0 serving Hermes 3 8B on GPU 0
+  vllm-0-hermes:
+    image: vllm/vllm-openai:v0.6.3
+    entrypoint: [
+      "vllm", "serve", "NousResearch/Hermes-3-Llama-3.1-8B",
+      "--enable-prefix-caching", "--enable-auto-tool-choice", "--enable-chunked-prefill",
+      "--gpu-memory-utilization", "0.98",
+      "--max-model-len", "131072",
+      "--tool-call-parser", "hermes",
+      "--max-num-batched-tokens", "512",
+      "--max-num-seqs", "256",
+      "--num-scheduler-steps", "1"
+    ]
+    environment:
+      - HUGGING_FACE_HUB_TOKEN=<secret>
+    volumes:
+      - /ephemeral/huggingface:/root/.cache/huggingface # storage for HF cache
+      #- ./vllm-configs:/usr/vllm-configs # for config file -- NOTE this is not used since config doesn't handle store-true
+    ports:
+      - "8000:8000"
+    ipc: host
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+              device_ids: ["0"]
+
+  vllm-1-qwen25:
+    image: vllm/vllm-openai:v0.6.3
+    entrypoint: [
+      "vllm", "serve", "Qwen/Qwen2.5-7B-Instruct",
+      "--enable-prefix-caching", "--enable-auto-tool-choice", "--enable-chunked-prefill",
+      "--gpu-memory-utilization", "0.98",
+      "--max-model-len", "32768",
+      "--tool-call-parser", "hermes",
+      "--max-num-batched-tokens", "512",
+      "--max-num-seqs", "256",
+      "--num-scheduler-steps", "1"
+    ]
+    environment:
+      - HUGGING_FACE_HUB_TOKEN=<secret>
+    volumes:
+      - /ephemeral/huggingface:/root/.cache/huggingface # storage for HF cache
+      #- ./vllm-configs:/usr/vllm-configs # for config file -- NOTE this is not used since config doesn't handle store-true
+    ports:
+      - "8001:8000"
+    ipc: host
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+              device_ids: ["1"]
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data-blacklight:/prometheus
+      # TODO add a volume to persist prometheus data
+    ports:
+      - "9000:9090"
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3030:3000"
+    volumes:
+      - grafana-storage-blacklight:/var/lib/grafana
+
+  text-embeddings-inference:
+    image: ghcr.io/huggingface/text-embeddings-inference:1.5
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: "nvidia"
+              capabilities: ["gpu"]
+              device_ids: ["2"]
+    environment:
+      HF_API_TOKEN: <secret>
+      MODEL_ID: jinaai/jina-embeddings-v2-base-en
+    volumes:
+      - /ephemeral/huggingface:/root/.cache/huggingface
+    ports:
+      - "8080:80"
+    restart: always
+
+volumes:
+  grafana-storage-blacklight:
+  prometheus-data-blacklight:

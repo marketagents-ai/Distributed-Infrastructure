@@ -1,0 +1,10 @@
+# hermes 3 8B vLLM configuration
+# this file declaratively specifies arguments for vLLM and is specified with --config CLI ARG
+# NOTE that conflicting CLI args will take precendence; precendence order is defaults < config file < CLI args
+# NOTE that store-true arguments like --enable-auto-tool-choice are bugged and need to be specified via CLI
+gpu-memory-utilization: 0.98
+max-model-len: 131072
+tool-call-parser: "hermes"
+max-num-batched-tokens: 512
+max-num-seqs: 256
+num-scheduler-steps: 1
