@@ -30,8 +30,8 @@ services:
         reservations:
           devices:
             - driver: nvidia
+              count: 1
               capabilities: [gpu]
-              device_ids: ["0"]
 
   vllm-1-qwen25:
     image: vllm/vllm-openai:v0.6.3
@@ -58,8 +58,8 @@ services:
         reservations:
           devices:
             - driver: nvidia
+              count: 1
               capabilities: [gpu]
-              device_ids: ["1"]
   vllm-2-llama31:
     image: vllm/vllm-openai:v0.6.3
     entrypoint: [
@@ -87,8 +87,8 @@ services:
         reservations:
           devices:
             - driver: nvidia
+              count: 1
               capabilities: [gpu]
-              device_ids: ["2"]
 
   vllm-3-toolace:
     image: vllm/vllm-openai:v0.6.3
@@ -118,8 +118,42 @@ services:
         reservations:
           devices:
             - driver: nvidia
+              count: 1
               capabilities: [gpu]
-              device_ids: ["2"]
+  # openbmb/MiniCPM3-4B
+  vllm-4-minicpm3:
+    image: vllm/vllm-openai:v0.6.3
+    entrypoint: [
+      "vllm", "serve", "openbmb/MiniCPM3-4B",
+      "--enable-prefix-caching", "--enable-auto-tool-choice", "--enable-chunked-prefill",
+      "--tool-parser-plugin", "/usr/app/tool-parsers/minicpm3_tool_parser.py",
+      "--gpu-memory-utilization", "0.98",
+      "--max-model-len", "32768",
+      "--tool-call-parser", "minicpm",
+      "--max-num-batched-tokens", "512",
+      "--max-num-seqs", "256",
+      "--num-scheduler-steps", "1",
+      # custom chat template with better system prompt improves performance!
+      "--chat-template", "/usr/app/chat-templates/minicpm3_4b.jinja",
+      "--trust-remote-code"
+    ]
+    environment:
+      - HUGGING_FACE_HUB_TOKEN=${HUGGINGFACE_TOKEN}
+    volumes:
+      - /ephemeral/huggingface:/root/.cache/huggingface # storage for HF cache
+      - ./configs:/usr/app # configs like chat templates, vllm configs, tool parsers
+    ports:
+      - "8004:8000"
+    ipc: host
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+
   prometheus:
     image: prom/prometheus
     volumes:
