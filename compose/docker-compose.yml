@@ -89,6 +89,37 @@ services:
             - driver: nvidia
               capabilities: [gpu]
               device_ids: ["2"]
+
+  vllm-3-toolace:
+    image: vllm/vllm-openai:v0.6.3
+    entrypoint: [
+      "vllm", "serve", "Team-ACE/ToolACE-8B",
+      "--enable-prefix-caching", "--enable-auto-tool-choice", "--enable-chunked-prefill",
+      "--tool-parser-plugin", "/usr/app/tool-parsers/pythonic_tool_parser.py",
+      "--gpu-memory-utilization", "0.98",
+      "--max-model-len", "131072",
+      "--tool-call-parser", "pythonic",
+      "--max-num-batched-tokens", "512",
+      "--max-num-seqs", "256",
+      "--num-scheduler-steps", "1",
+      # custom chat template with better system prompt improves performance!
+      "--chat-template", "/usr/app/chat-templates/tool_ace.jinja"
+    ]
+    environment:
+      - HUGGING_FACE_HUB_TOKEN=${HUGGINGFACE_TOKEN}
+    volumes:
+      - /ephemeral/huggingface:/root/.cache/huggingface # storage for HF cache
+      - ./configs:/usr/app # configs like chat templates, vllm configs, tool parsers
+    ports:
+      - "8003:8000"
+    ipc: host
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+              device_ids: ["2"]
   prometheus:
     image: prom/prometheus
     volumes:

@@ -4,3 +4,4 @@ unencrypted
 *.agekey
 .env
 compose/.env
+**/__pycache__/
