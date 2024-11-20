@@ -153,6 +153,40 @@ services:
               count: 1
               capabilities: [gpu]
 
+  # mistral
+  vllm-5-mistral:
+    image: vllm/vllm-openai:v0.6.3
+    entrypoint: [
+      "vllm", "serve", "mistralai/Mistral-7B-Instruct-v0.3",
+      # "--tokenizer-mode", "mistral", "--load-format", "mistral", "--config-format",  "mistral",
+      "--enable-prefix-caching", "--enable-auto-tool-choice", "--enable-chunked-prefill",
+      "--tool-parser", "mistral",
+      "--gpu-memory-utilization", "0.98",
+      "--max-model-len", "32768",
+      "--tool-call-parser", "mistral",
+      "--max-num-batched-tokens", "512",
+      "--max-num-seqs", "256",
+      "--num-scheduler-steps", "1",
+      # custom chat template with better system prompt improves performance!
+      "--chat-template", "/usr/app/chat-templates/mistral.jinja",
+      "--trust-remote-code"
+    ]
+    environment:
+      - HUGGING_FACE_HUB_TOKEN=${HUGGINGFACE_TOKEN}
+    volumes:
+      - /ephemeral/huggingface:/root/.cache/huggingface # storage for HF cache
+      - ./configs:/usr/app # configs like chat templates, vllm configs, tool parsers
+    ports:
+      - "8005:8000"
+    ipc: host
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
 
   prometheus:
     image: prom/prometheus

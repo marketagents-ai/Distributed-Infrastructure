@@ -14,3 +14,15 @@ scrape_configs:
   - job_name: 'vllm-2'
     static_configs:
       - targets: ['vllm-2-llama31:8000']
+
+  - job_name: 'vllm-3'
+    static_configs:
+      - targets: ['vllm-3-toolace:8000']
+
+  - job_name: 'vllm-4'
+    static_configs:
+      - targets: ['vllm-4-minicpm3']
+
+  - job_name: 'vllm-5'
+    static_configs:
+      - targets: ['vllm-5-mistral:8000']
