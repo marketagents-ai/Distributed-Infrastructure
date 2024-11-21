@@ -5,17 +5,21 @@
 version: '3.8'
 services:
 
-  vllm-7-functionary31:
+  vllm-7-functionary32:
     image: vllm/vllm-openai:v0.6.3
     entrypoint: [
-    "vllm", "serve", "meetkai/functionary-small-v3.1",
+    "vllm", "serve", "meetkai/functionary-small-v3.2",
     "--enable-prefix-caching", "--enable-chunked-prefill", # "--enable-auto-tool-choice",
+    # NOTE sliding window is not supported with prefix caching, either remove prefix caching
+    # OR add --disable-sliding-window
     "--gpu-memory-utilization", "0.98",
     "--max-model-len", "131072",
     # "--tool-call-parser", "...",
     "--max-num-batched-tokens", "512",
     "--max-num-seqs", "256",
-    "--num-scheduler-steps", "1"
+    "--num-scheduler-steps", "1",
+    "--trust-remote-code",
+    "--disable-sliding-window" # required
     ]
     environment:
       - HUGGING_FACE_HUB_TOKEN=${HUGGINGFACE_TOKEN}
