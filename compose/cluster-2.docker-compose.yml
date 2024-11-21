@@ -9,9 +9,8 @@ services:
     image: vllm/vllm-openai:v0.6.3
     entrypoint: [
     "vllm", "serve", "meetkai/functionary-small-v3.2",
-    "--enable-prefix-caching", "--enable-chunked-prefill", # "--enable-auto-tool-choice",
-    # NOTE sliding window is not supported with prefix caching, either remove prefix caching
-    # OR add --disable-sliding-window
+    #"--enable-prefix-caching", "--enable-chunked-prefill", "--enable-auto-tool-choice",
+    "--enable-chunked-prefill", # APC not compatible with sliding window
     "--gpu-memory-utilization", "0.98",
     "--max-model-len", "131072",
     # "--tool-call-parser", "...",
@@ -19,7 +18,6 @@ services:
     "--max-num-seqs", "256",
     "--num-scheduler-steps", "1",
     "--trust-remote-code",
-    "--disable-sliding-window" # required
     ]
     environment:
       - HUGGING_FACE_HUB_TOKEN=${HUGGINGFACE_TOKEN}
