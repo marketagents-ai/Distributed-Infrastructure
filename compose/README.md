@@ -14,6 +14,7 @@ We are _not_ deploying with swarm, since it does not
 have good GPU support, but we are using it's flat networking overlay to make 
 deployment and management easier. 
 
+### Docker Networking
 Docker swarm setup has already been performed. Two docker swarm networks were created:
 - `distributed-inference-secure` (encrypted -> recommended)
 - `distributed-inference` (unencrypted -> not recommended)
@@ -47,8 +48,31 @@ Recommended hosts to give public ports:
 - `litellm` (or tensorzero, whatever)
 - `postgres` IFF we add a secure password and need access to pull data
 
+### Jumping in 
+To get on the docker network and to be able to touch hosts that aren't exposing ports, I recommend
+using `ubuntu:slim`: 
+
+```shell
+sudo docker run \
+--network distributed-inference-secure \
+-it \ # launch shell
+debian:12-slim
+```
+This will let you touch hosts (e.g. through cURL) that are on the docker network using their image name. For example, you 
+can run `curl http://prometheus:9090` (NOTE: depending on the image you use, you may need to install tools e.g. cURL, 
+postgres client, etc. with `apt-get update` and `apt-get install`)
+
+e.g. 
+```shell 
+apt-get install curl inetutils-ping
+ping prometheus
+curl http://vllm-1-qwen25:8000/v1/models # use the container's port NOT the host port
+```
 
 ## Getting Started
+This section describes how to get up-and-running with deployment, assuming that the docker 
+swarm networking has already been set up (it has). 
+
 ### 1. Get up-to-date repository copies on both hosts
 _Before getting started_ make sure to run `git fetch && git pull` from `/home/ubuntu/blacklight/Distributed-Infrastructure` 
 on both hosts to ensure that you have up-to-date `docker-compose.yml` files as well as accompaying chat templates, tool 
