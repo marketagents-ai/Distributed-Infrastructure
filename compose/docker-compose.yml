@@ -24,6 +24,8 @@ services:
       - ./configs:/usr/app # configs like chat templates, vllm configs, tool parsers
     ports:
       - "8000:8000"
+    networks:
+      - distributed-inference-secure
     ipc: host
     deploy:
       resources:
@@ -52,6 +54,8 @@ services:
       - ./configs:/usr/app # configs like chat templates, vllm configs, tool parsers
     ports:
       - "8001:8000"
+    networks:
+      - distributed-inference-secure
     ipc: host
     deploy:
       resources:
@@ -81,6 +85,8 @@ services:
       - ./configs:/usr/app # configs like chat templates, vllm configs, tool parsers
     ports:
       - "8002:8000"
+    networks:
+      - distributed-inference-secure
     ipc: host
     deploy:
       resources:
@@ -112,6 +118,8 @@ services:
       - ./configs:/usr/app # configs like chat templates, vllm configs, tool parsers
     ports:
       - "8003:8000"
+    networks:
+      - distributed-inference-secure
     ipc: host
     deploy:
       resources:
@@ -145,6 +153,8 @@ services:
       - ./configs:/usr/app # configs like chat templates, vllm configs, tool parsers
     ports:
       - "8004:8000"
+    networks:
+      - distributed-inference-secure
     ipc: host
     deploy:
       resources:
@@ -180,6 +190,8 @@ services:
       - ./configs:/usr/app # configs like chat templates, vllm configs, tool parsers
     ports:
       - "8005:8000"
+    networks:
+      - distributed-inference-secure
     ipc: host
     deploy:
       resources:
@@ -212,6 +224,8 @@ services:
       - ./configs:/usr/app # configs like chat templates, vllm configs, tool parsers
     ports:
       - "8006:8000"
+    networks:
+      - distributed-inference-secure
     ipc: host
     deploy:
       resources:
@@ -227,13 +241,17 @@ services:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus-data-blacklight:/prometheus
       # TODO add a volume to persist prometheus data
-    ports:
-      - "9000:9090"
+    # ports:
+      # no public port needed- "9000:9090"
+    networks:
+      - distributed-inference-secure
 
   grafana:
     image: grafana/grafana
     ports:
       - "3030:3000"
+    networks:
+      - distributed-inference-secure
     volumes:
       - grafana-storage-blacklight:/var/lib/grafana
 
@@ -253,8 +271,15 @@ services:
       - /ephemeral/huggingface:/root/.cache/huggingface
     ports:
       - "8080:80"
+    networks:
+      - distributed-inference-secure
     restart: always
 
 volumes:
   grafana-storage-blacklight:
   prometheus-data-blacklight:
+
+# attach to existing overlay network created using docker swar
+networks:
+  distributed-inference-secure:
+    external: true
