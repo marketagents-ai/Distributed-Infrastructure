@@ -1,4 +1,6 @@
-# docker-compose.yml
+# this compose file is for the first 8x A100 80GB cluster. It is networked with the first
+# cluster using swarm networking, so containers can still refer to each other!
+# see cluster-2.docker-compose.yml for more.
 version: '3.8'
 
 services:
@@ -27,6 +29,7 @@ services:
     networks:
       - distributed-inference-secure
     ipc: host
+    restart: unless-stopped
     deploy:
       resources:
         reservations:
@@ -57,6 +60,7 @@ services:
     networks:
       - distributed-inference-secure
     ipc: host
+    restart: unless-stopped
     deploy:
       resources:
         reservations:
@@ -88,6 +92,7 @@ services:
     networks:
       - distributed-inference-secure
     ipc: host
+    restart: unless-stopped
     deploy:
       resources:
         reservations:
@@ -121,6 +126,7 @@ services:
     networks:
       - distributed-inference-secure
     ipc: host
+    restart: unless-stopped
     deploy:
       resources:
         reservations:
@@ -156,6 +162,7 @@ services:
     networks:
       - distributed-inference-secure
     ipc: host
+    restart: unless-stopped
     deploy:
       resources:
         reservations:
@@ -193,6 +200,7 @@ services:
     networks:
       - distributed-inference-secure
     ipc: host
+    restart: unless-stopped
     deploy:
       resources:
         reservations:
@@ -227,6 +235,7 @@ services:
     networks:
       - distributed-inference-secure
     ipc: host
+    restart: unless-stopped
     deploy:
       resources:
         reservations:
@@ -245,6 +254,7 @@ services:
       # no public port needed- "9000:9090"
     networks:
       - distributed-inference-secure
+    restart: unless-stopped
 
   grafana:
     image: grafana/grafana
@@ -254,6 +264,7 @@ services:
       - distributed-inference-secure
     volumes:
       - grafana-storage-blacklight:/var/lib/grafana
+    restart: unless-stopped
 
   text-embeddings-inference:
     image: ghcr.io/huggingface/text-embeddings-inference:1.5
@@ -273,13 +284,13 @@ services:
       - "8080:80"
     networks:
       - distributed-inference-secure
-    restart: always
+    restart: unless-stopped
 
 volumes:
   grafana-storage-blacklight:
   prometheus-data-blacklight:
 
-# attach to existing overlay network created using docker swar
+# attach to existing overlay network created using docker swarm
 networks:
   distributed-inference-secure:
     external: true

@@ -1,0 +1,42 @@
+# this compose file is for the second 8x A100 80GB cluster. It is networked with the first
+# cluster using swarm networking, so containers can still refer to each other!
+# see cluster-1.docker-compose.yml for more.
+
+version: '3.8'
+services:
+
+  vllm-7-functionary31:
+    image: vllm/vllm-openai:v0.6.3
+    entrypoint: [
+    "vllm", "serve", "meetkai/functionary-small-v3.1",
+    "--enable-prefix-caching", "--enable-chunked-prefill", # "--enable-auto-tool-choice",
+    "--gpu-memory-utilization", "0.98",
+    "--max-model-len", "131072",
+    # "--tool-call-parser", "...",
+    "--max-num-batched-tokens", "512",
+    "--max-num-seqs", "256",
+    "--num-scheduler-steps", "1"
+    ]
+    environment:
+      - HUGGING_FACE_HUB_TOKEN=${HUGGINGFACE_TOKEN}
+    volumes:
+      - /ephemeral/huggingface:/root/.cache/huggingface # storage for HF cache
+      - ./configs:/usr/app # configs like chat templates, vllm configs, tool parsers
+    ports:
+      - "8000:8000" # TODO REMOVE
+    networks:
+      - distributed-inference-secure
+    ipc: host
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: "nvidia"
+              capabilities: ["gpu"]
+              device_ids: ["0"]
+
+# attach to existing overlay network created using docker swarm
+networks:
+  distributed-inference-secure:
+    external: true
