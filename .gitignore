@@ -1,3 +1,7 @@
+
 unencrypted
 .sops.yaml
 *.agekey
+.env
+compose/.env
+**/__pycache__/
