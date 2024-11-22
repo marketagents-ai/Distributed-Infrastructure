@@ -133,3 +133,25 @@ But from inside the docker network, you would run
 ```shell 
 curl http://vllm-0-hermes:8000/v1/models # 8000 is the container port used by the vLLM OpenAI image
 ```
+
+Any container's logs can also be accessed using `sudo docker logs <container name or ID>` e.g. `sudo docker logs vllm-hermes-0`. 
+
+_Note_ that unlike DNS resolution, pullings logs _must_ be done from the host that the container is running on, since even
+though we are using docker swarm for networking, we are still using compose for deployment. 
+
+Finally, you can also start a container on the network to verify connectivity:
+```shell 
+sudo docker run -it --network distributed-inference-secure debian:12-slim
+
+# run inside the container:
+apt-get update
+apt-get install curl 
+apt-get install inetutils-ping
+curl http://<service name>:<port>/v1/models
+ping <service name>
+```
+
+Make sure to stop and remove the container once you are finished with it. Specifying a name with `--name` is _not_ recommended
+as this will add the name as a host to the network's DNS, which is fine _until_ you try to create multiple containers with the 
+same name (e.g. running the above command more than once, or running it once on each deployment host) at which point 
+the networking gets confused and your jumpbox's networking stops working.
