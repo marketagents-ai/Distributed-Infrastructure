@@ -48,6 +48,12 @@ Recommended hosts to give public ports:
 - `litellm` (or tensorzero, whatever)
 - `postgres` IFF we add a secure password and need access to pull data
 
+**Important**: in order for containers created through compose files to be able to access `docker swarm`-created networks,
+you need to use the `compose` plugin for the docker CLI (e.g. `docker compose` instead of `docker-compose`) since `docker-compose` 
+is not aware of docker swarm networks, while the regular `docker` CLI with the compose plugin is. 
+
+The `compose` plugin for both hosts has been installed already, but if you are running this on different hosts, you will 
+need to install this plugin. Details [here](https://docs.docker.com/compose/install/linux/#install-using-the-repository).
 ### Jumping in 
 To get on the docker network and to be able to touch hosts that aren't exposing ports, I recommend
 using `ubuntu:slim`: 
@@ -78,3 +84,52 @@ _Before getting started_ make sure to run `git fetch && git pull` from `/home/ub
 on both hosts to ensure that you have up-to-date `docker-compose.yml` files as well as accompaying chat templates, tool 
 parsers, et cetera. 
 
+### 2. Set up a .env file 
+Some models used in this demo are gated and require a hugging face access token with read permissions (Llama 3.1, Mistral). 
+This is referenced in the `docker-compose` files, so you will need to create a `.env` file at `Distributed-Infrastructure/compose/.env`
+with the `HUGGINGFACE_TOKEN` variable set. 
+
+_Failure to do this will result in some models failing to start_.
+
+### 3. Run the first compose file on the first host
+_Note: because we are using an overlay network created with docker swarm, you **cannot** use the `docker-compose` command 
+since it is not aware of docker swarm._ Instead, you must use the `docker compose` version of the command - both hosts 
+have the `compose` plugin for the docker CLI. If you don't have it, get it [here](https://docs.docker.com/compose/install/linux/#install-using-the-repository).
+
+Run the following command on each hostL
+```shell
+cd /home/ubuntu/blacklight/Distributed-Infrastructure/compose
+sudo docker compose -f cluster-1.docker-compose.yml up -d # run in detached mode
+
+# optional: watch the process list to make sure containers start & don't die:
+watch -n 2 "docker ps"
+```
+
+### 4. Run the second compose file on the second host
+Same as above, with the second compose file:
+
+```shell 
+cd /home/ubuntu/blacklight/Distributed-Infrastructure/compose
+sudo docker compose -f cluster-2.docker-compose.yml up -d 
+
+# optional: watch the container list to make sure containers start without dying
+watch -n 2 "docker ps"
+```
+
+### 5. Verifying Instance startup &  connectivity 
+Since by default the vLLM instances will not be exposed from the host, and are only accessible
+through the docker network, you may wish to access them individually to verify that they are 
+running successfully, or to verify container connectivity. 
+
+All hosts on the network can be accessed by any other host using the name of the service (e.g. `vllm-0-hermes`) as the hostname. 
+The port to use will be the _container_ port (e.g. for vLLM always 8000), not the host port, even if a host port is mapped to the container port.
+
+E.g. the following command would be used to access a vLLM instances from outside the network, if the port `8080` on the host were mapped to port `8000` on the container:
+```shell 
+curl http://<host IP>:8080/v1/models
+```
+
+But from inside the docker network, you would run 
+```shell 
+curl http://vllm-0-hermes:8000/v1/models # 8000 is the container port used by the vLLM OpenAI image
+```

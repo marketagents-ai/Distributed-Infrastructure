@@ -10,10 +10,11 @@ services:
     entrypoint: [
     "vllm", "serve", "meetkai/functionary-small-v3.2",
     #"--enable-prefix-caching", "--enable-chunked-prefill", "--enable-auto-tool-choice",
-    "--enable-chunked-prefill", # APC not compatible with sliding window
+    "--enable-auto-tool-choice", "--enable-chunked-prefill", # APC not compatible with sliding window
     "--gpu-memory-utilization", "0.98",
     "--max-model-len", "131072",
-    # "--tool-call-parser", "...",
+    "--tool-parser-plugin", "/usr/app/tool-parsers/functionary_32_tool_parser.py",
+    "--tool-call-parser", "functionary_32",
     "--max-num-batched-tokens", "512",
     "--max-num-seqs", "256",
     "--num-scheduler-steps", "1",
