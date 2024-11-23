@@ -5,40 +5,6 @@
 version: '3.8'
 services:
 
-  vllm-7-functionary32:
-    image: vllm/vllm-openai:v0.6.3
-    entrypoint: [
-    "vllm", "serve", "meetkai/functionary-small-v3.2",
-    #"--enable-prefix-caching", "--enable-chunked-prefill", "--enable-auto-tool-choice",
-    "--enable-auto-tool-choice", "--enable-chunked-prefill", # APC not compatible with sliding window
-    "--gpu-memory-utilization", "0.98",
-    "--max-model-len", "131072",
-    "--tool-parser-plugin", "/usr/app/tool-parsers/functionary_32_tool_parser.py",
-    "--tool-call-parser", "functionary_32",
-    "--max-num-batched-tokens", "512",
-    "--max-num-seqs", "256",
-    "--num-scheduler-steps", "1",
-    "--trust-remote-code",
-    ]
-    environment:
-      - HUGGING_FACE_HUB_TOKEN=${HUGGINGFACE_TOKEN}
-    volumes:
-      - /ephemeral/huggingface:/root/.cache/huggingface # storage for HF cache
-      - ./configs:/usr/app # configs like chat templates, vllm configs, tool parsers
-    ports:
-      - "8000:8000" # TODO REMOVE
-    networks:
-      - distributed-inference-secure
-    ipc: host
-    restart: unless-stopped
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: "nvidia"
-              capabilities: ["gpu"]
-              device_ids: ["0"]
-
   vllm-8-archfunction:
     image: vllm/vllm-openai:v0.6.3
     entrypoint: [
