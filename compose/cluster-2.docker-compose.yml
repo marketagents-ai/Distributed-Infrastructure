@@ -39,6 +39,37 @@ services:
               capabilities: ["gpu"]
               device_ids: ["0"]
 
+  vllm-8-archfunction:
+    image: vllm/vllm-openai:v0.6.3
+    entrypoint: [
+    "vllm", "serve", "katanemo/Arch-Function-7B",
+    "--enable-prefix-caching", "--enable-auto-tool-choice", "--enable-chunked-prefill",
+    "--gpu-memory-utilization", "0.98",
+    "--max-model-len", "32768",
+    "--tool-call-parser", "hermes",
+    "--max-num-batched-tokens", "512",
+    "--max-num-seqs", "256",
+    "--num-scheduler-steps", "1"
+    ]
+    environment:
+      - HUGGING_FACE_HUB_TOKEN=${HUGGINGFACE_TOKEN}
+    volumes:
+      - /ephemeral/huggingface:/root/.cache/huggingface # for HF cache
+      - ./configs:/usr/app # chat templates etc
+    ports:
+      - "8001:8000"
+    networks:
+      - distributed-inference-secure
+    ipc: host
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: "nvidia"
+              capabilities: ["gpu"]
+              device_ids: ["1"] # TODO this needs to run on the other node.
+
 # attach to existing overlay network created using docker swarm
 networks:
   distributed-inference-secure:
