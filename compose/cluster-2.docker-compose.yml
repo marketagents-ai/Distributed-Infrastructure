@@ -22,8 +22,8 @@ services:
     volumes:
       - /ephemeral/huggingface:/root/.cache/huggingface # for HF cache
       - ./configs:/usr/app # chat templates etc
-    ports:
-      - "8001:8000"
+    #ports:
+    #  - "8001:8000"
     networks:
       - distributed-inference-secure
     ipc: host
@@ -47,6 +47,8 @@ services:
       - ./litellm_config.yml:/app/config.yaml
     command:
       - "--config=/app/config.yaml"
+    networks:
+      - distributed-inference-secure
 
 # attach to existing overlay network created using docker swarm
 networks:

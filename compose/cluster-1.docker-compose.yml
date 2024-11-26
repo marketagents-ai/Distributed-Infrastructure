@@ -24,8 +24,8 @@ services:
     volumes:
       - /ephemeral/huggingface:/root/.cache/huggingface # storage for HF cache
       - ./configs:/usr/app # configs like chat templates, vllm configs, tool parsers
-    ports:
-      - "8000:8000"
+    #ports:
+    #  - "8000:8000"
     networks:
       - distributed-inference-secure
     ipc: host
@@ -55,8 +55,8 @@ services:
     volumes:
       - /ephemeral/huggingface:/root/.cache/huggingface # storage for HF cache
       - ./configs:/usr/app # configs like chat templates, vllm configs, tool parsers
-    ports:
-      - "8001:8000"
+    #ports:
+    #  - "8001:8000"
     networks:
       - distributed-inference-secure
     ipc: host
@@ -87,8 +87,8 @@ services:
     volumes:
       - /ephemeral/huggingface:/root/.cache/huggingface # storage for HF cache
       - ./configs:/usr/app # configs like chat templates, vllm configs, tool parsers
-    ports:
-      - "8002:8000"
+    #ports:
+    #  - "8002:8000"
     networks:
       - distributed-inference-secure
     ipc: host
@@ -121,8 +121,8 @@ services:
     volumes:
       - /ephemeral/huggingface:/root/.cache/huggingface # storage for HF cache
       - ./configs:/usr/app # configs like chat templates, vllm configs, tool parsers
-    ports:
-      - "8003:8000"
+    #ports:
+    #  - "8003:8000"
     networks:
       - distributed-inference-secure
     ipc: host
@@ -157,8 +157,8 @@ services:
     volumes:
       - /ephemeral/huggingface:/root/.cache/huggingface # storage for HF cache
       - ./configs:/usr/app # configs like chat templates, vllm configs, tool parsers
-    ports:
-      - "8004:8000"
+    #ports:
+    #  - "8004:8000"
     networks:
       - distributed-inference-secure
     ipc: host
@@ -195,8 +195,8 @@ services:
     volumes:
       - /ephemeral/huggingface:/root/.cache/huggingface # storage for HF cache
       - ./configs:/usr/app # configs like chat templates, vllm configs, tool parsers
-    ports:
-      - "8005:8000"
+    #ports:
+    #  - "8005:8000"
     networks:
       - distributed-inference-secure
     ipc: host
@@ -230,8 +230,8 @@ services:
     volumes:
       - /ephemeral/huggingface:/root/.cache/huggingface # storage for HF cache
       - ./configs:/usr/app # configs like chat templates, vllm configs, tool parsers
-    ports:
-      - "8006:8000"
+    #ports:
+    #  - "8006:8000"
     networks:
       - distributed-inference-secure
     ipc: host
