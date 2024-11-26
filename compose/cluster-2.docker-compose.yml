@@ -23,9 +23,8 @@ services:
     volumes:
       - /ephemeral/huggingface:/root/.cache/huggingface # for HF cache
       - ./configs:/usr/app # chat templates etc
-    # TODO - NUKE PORTS; ENABLED FOR DEBUGGING ONLY
-    ports:
-      - "8000:8000"
+    #ports:
+    #  - "8000:8000"
     networks:
       - distributed-inference-secure
     ipc: host
@@ -36,7 +35,7 @@ services:
           devices:
             - driver: "nvidia"
               capabilities: ["gpu"]
-              device_ids: ["0"] # TODO this needs to run on the other node
+              device_ids: ["0"]
 
   vllm-8-archfunction:
     image: vllm/vllm-openai:v0.6.3
@@ -67,7 +66,7 @@ services:
           devices:
             - driver: "nvidia"
               capabilities: ["gpu"]
-              device_ids: ["1"] # TODO this needs to run on the other node
+              device_ids: ["1"]
 
   litellm:
     image: ghcr.io/berriai/litellm:main-stable

@@ -50,6 +50,13 @@ model_list:
       api_base: http://vllm-6-internlm:8000/v1
       api_key: none
 
+  # vllm-7-functionary31
+  - model_name: meetkai/functionary-small-v3.1
+    litellm_params:
+      model: openai/meetkai/functionary-small-v3.1
+      api_base: http://vllm-7-functionary31:8000/v1
+      api_key: none
+
   # vllm-8-archfunction
   - model_name: katanemo/Arch-Function-7B
     litellm_params:
