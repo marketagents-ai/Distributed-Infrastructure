@@ -3,4 +3,4 @@ model_list:
     litellm_params:
       model: openai/NousResearch/Hermes-3-Llama-3.1-8B
       api_base: http://vllm-0-hermes:8000/v1
-
+      api_key: "no_key_required"
