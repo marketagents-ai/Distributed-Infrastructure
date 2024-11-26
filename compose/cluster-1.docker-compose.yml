@@ -4,8 +4,6 @@
 version: '3.8'
 
 services:
-  # TODO set up LiteLLM docker image
-
   # vLLM Instance 0 serving Hermes 3 8B on GPU 0
   vllm-0-hermes:
     image: vllm/vllm-openai:v0.6.3
@@ -24,8 +22,8 @@ services:
     volumes:
       - /ephemeral/huggingface:/root/.cache/huggingface # storage for HF cache
       - ./configs:/usr/app # configs like chat templates, vllm configs, tool parsers
-    ports:
-      - "8000:8000"
+    #ports:
+    #  - "8000:8000"
     networks:
       - distributed-inference-secure
     ipc: host
@@ -36,7 +34,7 @@ services:
           devices:
             - driver: "nvidia"
               capabilities: ["gpu"]
-              device_ids: ["0"] # TODO this needs to run on the other node.
+              device_ids: ["0"] 
 
   vllm-1-qwen25:
     image: vllm/vllm-openai:v0.6.3
@@ -55,8 +53,8 @@ services:
     volumes:
       - /ephemeral/huggingface:/root/.cache/huggingface # storage for HF cache
       - ./configs:/usr/app # configs like chat templates, vllm configs, tool parsers
-    ports:
-      - "8001:8000"
+    #ports:
+    #  - "8001:8000"
     networks:
       - distributed-inference-secure
     ipc: host
@@ -67,7 +65,7 @@ services:
           devices:
             - driver: "nvidia"
               capabilities: ["gpu"]
-              device_ids: ["1"] # TODO this needs to run on the other node.
+              device_ids: ["1"] 
   vllm-2-llama31:
     image: vllm/vllm-openai:v0.6.3
     entrypoint: [
@@ -87,8 +85,8 @@ services:
     volumes:
       - /ephemeral/huggingface:/root/.cache/huggingface # storage for HF cache
       - ./configs:/usr/app # configs like chat templates, vllm configs, tool parsers
-    ports:
-      - "8002:8000"
+    #ports:
+    #  - "8002:8000"
     networks:
       - distributed-inference-secure
     ipc: host
@@ -99,7 +97,7 @@ services:
           devices:
             - driver: "nvidia"
               capabilities: ["gpu"]
-              device_ids: ["2"] # TODO this needs to run on the other node.
+              device_ids: ["2"] 
 
   vllm-3-toolace:
     image: vllm/vllm-openai:v0.6.3
@@ -121,8 +119,8 @@ services:
     volumes:
       - /ephemeral/huggingface:/root/.cache/huggingface # storage for HF cache
       - ./configs:/usr/app # configs like chat templates, vllm configs, tool parsers
-    ports:
-      - "8003:8000"
+    #ports:
+    #  - "8003:8000"
     networks:
       - distributed-inference-secure
     ipc: host
@@ -133,7 +131,7 @@ services:
           devices:
             - driver: "nvidia"
               capabilities: ["gpu"]
-              device_ids: ["3"] # TODO this needs to run on the other node.
+              device_ids: ["3"] 
 
   # openbmb/MiniCPM3-4B
   vllm-4-minicpm3:
@@ -157,8 +155,8 @@ services:
     volumes:
       - /ephemeral/huggingface:/root/.cache/huggingface # storage for HF cache
       - ./configs:/usr/app # configs like chat templates, vllm configs, tool parsers
-    ports:
-      - "8004:8000"
+    #ports:
+    #  - "8004:8000"
     networks:
       - distributed-inference-secure
     ipc: host
@@ -169,7 +167,7 @@ services:
           devices:
             - driver: "nvidia"
               capabilities: ["gpu"]
-              device_ids: ["4"] # TODO this needs to run on the other node.
+              device_ids: ["4"] 
 
   # mistral
   vllm-5-mistral:
@@ -195,8 +193,8 @@ services:
     volumes:
       - /ephemeral/huggingface:/root/.cache/huggingface # storage for HF cache
       - ./configs:/usr/app # configs like chat templates, vllm configs, tool parsers
-    ports:
-      - "8005:8000"
+    #ports:
+    #  - "8005:8000"
     networks:
       - distributed-inference-secure
     ipc: host
@@ -207,7 +205,7 @@ services:
           devices:
             - driver: "nvidia"
               capabilities: ["gpu"]
-              device_ids: ["5"] # TODO this needs to run on the other node.
+              device_ids: ["5"] 
 
   vllm-6-internlm:
     image: vllm/vllm-openai:v0.6.3
@@ -230,8 +228,8 @@ services:
     volumes:
       - /ephemeral/huggingface:/root/.cache/huggingface # storage for HF cache
       - ./configs:/usr/app # configs like chat templates, vllm configs, tool parsers
-    ports:
-      - "8006:8000"
+    #ports:
+    #  - "8006:8000"
     networks:
       - distributed-inference-secure
     ipc: host
@@ -242,14 +240,13 @@ services:
           devices:
             - driver: "nvidia"
               capabilities: ["gpu"]
-              device_ids: ["6"] # TODO this needs to run on the other node.
+              device_ids: ["6"] 
 
   prometheus:
     image: prom/prometheus
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus-data-blacklight:/prometheus
-      # TODO add a volume to persist prometheus data
     # ports:
       # no public port needed- "9000:9090"
     networks:
@@ -274,7 +271,7 @@ services:
           devices:
             - driver: "nvidia"
               capabilities: ["gpu"]
-              device_ids: ["7"] # TODO this needs to run on the other node.
+              device_ids: ["7"] 
     environment:
       HF_API_TOKEN: <secret>
       MODEL_ID: jinaai/jina-embeddings-v2-base-en

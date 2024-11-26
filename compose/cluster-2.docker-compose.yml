@@ -9,10 +9,11 @@ services:
     image: vllm/vllm-openai:v0.6.3
     entrypoint: [
     "vllm", "serve", "meetkai/functionary-small-v3.1",
-    "--enable-prefix-caching", "--enable-chunked-prefill", # "--enable-auto-tool-choice",
+    "--enable-auto-tool-choice", "--enable-chunked-prefill", # no prefix caching bc sliding window
+    "--tool-parser-plugin", "/usr/app/tool-parsers/llama3_xml.py", # uses llama 3.1's XML-like format
+    "--tool-call-parser", "functionary_31",
     "--gpu-memory-utilization", "0.98",
     "--max-model-len", "131072",
-    # "--tool-call-parser", "...",
     "--max-num-batched-tokens", "512",
     "--max-num-seqs", "256",
     "--num-scheduler-steps", "1"
@@ -20,10 +21,10 @@ services:
     environment:
       - HUGGING_FACE_HUB_TOKEN=${HUGGINGFACE_TOKEN}
     volumes:
-      - /ephemeral/huggingface:/root/.cache/huggingface # storage for HF cache
-      - ./configs:/usr/app # configs like chat templates, vllm configs, tool parsers
-    ports:
-      - "8000:8000" # TODO REMOVE
+      - /ephemeral/huggingface:/root/.cache/huggingface # for HF cache
+      - ./configs:/usr/app # chat templates etc
+    #ports:
+    #  - "8000:8000"
     networks:
       - distributed-inference-secure
     ipc: host
@@ -35,6 +36,51 @@ services:
             - driver: "nvidia"
               capabilities: ["gpu"]
               device_ids: ["0"]
+
+  vllm-8-archfunction:
+    image: vllm/vllm-openai:v0.6.3
+    entrypoint: [
+    "vllm", "serve", "katanemo/Arch-Function-7B",
+    "--enable-prefix-caching", "--enable-auto-tool-choice", "--enable-chunked-prefill",
+    "--gpu-memory-utilization", "0.98",
+    "--max-model-len", "32768",
+    "--tool-call-parser", "hermes",
+    "--max-num-batched-tokens", "512",
+    "--max-num-seqs", "256",
+    "--num-scheduler-steps", "1"
+    ]
+    environment:
+      - HUGGING_FACE_HUB_TOKEN=${HUGGINGFACE_TOKEN}
+    volumes:
+      - /ephemeral/huggingface:/root/.cache/huggingface # for HF cache
+      - ./configs:/usr/app # chat templates etc
+    #ports:
+    #  - "8001:8000"
+    networks:
+      - distributed-inference-secure
+    ipc: host
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: "nvidia"
+              capabilities: ["gpu"]
+              device_ids: ["1"]
+
+  litellm:
+    image: ghcr.io/berriai/litellm:main-stable
+    ports:
+      - "4000:4000"
+    environment:
+      - LITELLM_MASTER_KEY=${LITELLM_MASTER_KEY}
+      - LITELLM_SALT_KEY=${LITELLM_SALT_KEY}
+    volumes:
+      - ./litellm_config.yml:/app/config.yaml
+    command:
+      - "--config=/app/config.yaml"
+    networks:
+      - distributed-inference-secure
 
 # attach to existing overlay network created using docker swarm
 networks:
