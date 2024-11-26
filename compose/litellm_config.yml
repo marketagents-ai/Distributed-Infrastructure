@@ -1,6 +1,15 @@
 model_list:
+
+  # vllm-0-hermes
   - model_name: NousResearch/Hermes-3-Llama-3.1-8B
     litellm_params:
       model: openai/NousResearch/Hermes-3-Llama-3.1-8B
       api_base: http://vllm-0-hermes:8000/v1
+      api_key: "no_key_required"
+
+  # vllm-1-qwen25
+  - model_name: Qwen/Qwen2.5-7B-Instruct
+    litellm_params:
+      model: openai/Qwen/Qwen2.5-7B-Instruct
+      api_base: http://vllm-1-qwen25:8000/v1
       api_key: "no_key_required"
