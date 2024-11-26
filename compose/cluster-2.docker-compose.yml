@@ -34,7 +34,19 @@ services:
           devices:
             - driver: "nvidia"
               capabilities: ["gpu"]
-              device_ids: ["1"] # TODO this needs to run on the other node.
+              device_ids: ["1"] # TODO this needs to run on the other node
+
+  litellm:
+    image: ghcr.io/berriai/litellm:main-stable
+    ports:
+      - "4000:4000"
+    environment:
+      - LITELLM_MASTER_KEY=${LITELLM_MASTER_KEY}
+      - LITELLM_SALT_KEY=${LITELLM_SALT_KEY}
+    volumes:
+      - ./litellm_config.yml:/app/config.yaml
+    command:
+      - "--config=/app/config.yaml"
 
 # attach to existing overlay network created using docker swarm
 networks:
