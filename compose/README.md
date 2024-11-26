@@ -91,7 +91,7 @@ with the `HUGGINGFACE_TOKEN` variable set.
 
 _Failure to do this will result in some models failing to start_.
 
-### 3. Run the first compose file on the first host
+### 3. Run the first compose file on the first host 
 _Note: because we are using an overlay network created with docker swarm, you **cannot** use the `docker-compose` command 
 since it is not aware of docker swarm._ Instead, you must use the `docker compose` version of the command - both hosts 
 have the `compose` plugin for the docker CLI. If you don't have it, get it [here](https://docs.docker.com/compose/install/linux/#install-using-the-repository).
@@ -128,6 +128,8 @@ E.g. the following command would be used to access a vLLM instances from outside
 ```shell 
 curl http://<host IP>:8080/v1/models
 ```
+_Note that by default, vLLM instances **no longer** have exposed ports_. They can only be access through the Docker 
+network, and through the LiteLLM proxy.
 
 But from inside the docker network, you would run 
 ```shell 
@@ -136,7 +138,7 @@ curl http://vllm-0-hermes:8000/v1/models # 8000 is the container port used by th
 
 Any container's logs can also be accessed using `sudo docker logs <container name or ID>` e.g. `sudo docker logs vllm-hermes-0`. 
 
-_Note_ that unlike DNS resolution, pullings logs _must_ be done from the host that the container is running on, since even
+_Note_ that unlike DNS resolution, pulling logs _must_ be done from the host that the container is running on, since even
 though we are using docker swarm for networking, we are still using compose for deployment. 
 
 Finally, you can also start a container on the network to verify connectivity:
@@ -155,3 +157,13 @@ Make sure to stop and remove the container once you are finished with it. Specif
 as this will add the name as a host to the network's DNS, which is fine _until_ you try to create multiple containers with the 
 same name (e.g. running the above command more than once, or running it once on each deployment host) at which point 
 the networking gets confused and your jumpbox's networking stops working.
+
+### 6. Accessing Models through LiteLLM
+[LiteLLM](https://docs.litellm.ai/docs/) provides an OpenAI-compatible proxy that can be connected to a wide variety of 
+LLM backends, including non-OpenAI-compatible models. This means you can do neat things like call Anthropic models in an
+OpenAI-compatible way!
+
+For our purposes, we're using it to aggregate our vLLM instances into a single endpoint. Right now it's running on port `4000` 
+on whichever of the hosts it's started on. Note that you'll need to set the `Authorization` header to use the bearer token, 
+like so: `Authorization: Beader sk-...` (ask Kyle for the API key). Once you have done this, you can call any of our 
+running vLLM models from that single endpoint using the OpenAI SDK or your toolchain of choice (Vercel AI SDK, anyone?)
