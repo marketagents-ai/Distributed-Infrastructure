@@ -14,9 +14,9 @@ services:
     "--tool-call-parser", "functionary_31",
     "--gpu-memory-utilization", "0.98",
     "--max-model-len", "131072",
-    "--max-num-batched-tokens", "131072",
-    "--max-num-seqs", "256",
-    # "--num-scheduler-steps", "8"
+    "--max-num-batched-tokens", "8096",
+    #"--max-num-seqs", "256",
+    # "--num-scheduler-steps", "1"
     ]
     environment:
       - HUGGING_FACE_HUB_TOKEN=${HUGGINGFACE_TOKEN}
@@ -45,9 +45,9 @@ services:
     "--gpu-memory-utilization", "0.98",
     "--max-model-len", "32768",
     "--tool-call-parser", "hermes",
-    "--max-num-batched-tokens", "131072",
+    "--max-num-batched-tokens", "8096",
     "--max-num-seqs", "256",
-    "--num-scheduler-steps", "8"
+    "--num-scheduler-steps", "1"
     ]
     environment:
       - HUGGING_FACE_HUB_TOKEN=${HUGGINGFACE_TOKEN}
