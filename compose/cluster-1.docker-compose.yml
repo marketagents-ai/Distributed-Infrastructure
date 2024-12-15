@@ -13,7 +13,7 @@ services:
       "--gpu-memory-utilization", "0.98",
       "--max-model-len", "131072",
       "--tool-call-parser", "hermes",
-      "--max-num-batched-tokens", "8096",
+      #"--max-num-batched-tokens", "8096",
       #"--max-num-seqs", "256",
       "--num-scheduler-steps", "1"
     ]
@@ -44,7 +44,7 @@ services:
       "--gpu-memory-utilization", "0.98",
       "--max-model-len", "32768",
       "--tool-call-parser", "hermes",
-      "--max-num-batched-tokens", "8096",
+      #"--max-num-batched-tokens", "8096",
       #"--max-num-seqs", "256",
       "--num-scheduler-steps", "1"
     ]
@@ -74,8 +74,8 @@ services:
       "--gpu-memory-utilization", "0.98",
       "--max-model-len", "131072",
       "--tool-call-parser", "llama3_json",
-      "--max-num-batched-tokens", "8096",
-      "--max-num-seqs", "256",
+      #"--max-num-batched-tokens", "8096",
+      #"--max-num-seqs", "256",
       "--num-scheduler-steps", "1",
       # custom chat template with better system prompt improves performance!
       "--chat-template", "/usr/app/chat-templates/llama_3_1.jinja"
@@ -108,7 +108,7 @@ services:
       "--gpu-memory-utilization", "0.98",
       "--max-model-len", "131072",
       "--tool-call-parser", "pythonic",
-      "--max-num-batched-tokens", "8096",
+      #"--max-num-batched-tokens", "8096",
       #"--max-num-seqs", "256",
       "--num-scheduler-steps", "1",
       # custom chat template with better system prompt improves performance!
@@ -181,8 +181,8 @@ services:
       "--gpu-memory-utilization", "0.98",
       "--max-model-len", "32768",
       "--tool-call-parser", "mistral",
-      "--max-num-batched-tokens", "8096",
-      "--max-num-seqs", "256",
+      #"--max-num-batched-tokens", "8096",
+      #"--max-num-seqs", "256",
       "--num-scheduler-steps", "1",
       # custom chat template with better system prompt improves performance!
       "--chat-template", "/usr/app/chat-templates/mistral.jinja",
@@ -216,8 +216,8 @@ services:
       "--gpu-memory-utilization", "0.98",
       "--max-model-len", "65536",
       "--tool-call-parser", "internlm",
-      "--max-num-batched-tokens", "8096",
-      "--max-num-seqs", "256",
+      #"--max-num-batched-tokens", "8096",
+      #"--max-num-seqs", "256",
       "--num-scheduler-steps", "1",
       # custom chat template with better system prompt improves performance!
       "--chat-template", "/usr/app/chat-templates/internlm.jinja",
