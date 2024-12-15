@@ -15,7 +15,7 @@ services:
       "--tool-call-parser", "hermes",
       "--max-num-batched-tokens", "512",
       "--max-num-seqs", "256",
-      "--num-scheduler-steps", "1"
+      "--num-scheduler-steps", "8"
     ]
     environment:
       - HUGGING_FACE_HUB_TOKEN=${HUGGINGFACE_TOKEN}
@@ -46,7 +46,7 @@ services:
       "--tool-call-parser", "hermes",
       "--max-num-batched-tokens", "512",
       "--max-num-seqs", "256",
-      "--num-scheduler-steps", "1"
+      "--num-scheduler-steps", "8"
     ]
     environment:
       - HUGGING_FACE_HUB_TOKEN=${HUGGINGFACE_TOKEN}
@@ -76,7 +76,7 @@ services:
       "--tool-call-parser", "llama3_json",
       "--max-num-batched-tokens", "512",
       "--max-num-seqs", "256",
-      "--num-scheduler-steps", "1",
+      "--num-scheduler-steps", "8",
       # custom chat template with better system prompt improves performance!
       "--chat-template", "/usr/app/chat-templates/llama_3_1.jinja"
     ]
@@ -110,7 +110,7 @@ services:
       "--tool-call-parser", "pythonic",
       "--max-num-batched-tokens", "512",
       "--max-num-seqs", "256",
-      "--num-scheduler-steps", "1",
+      "--num-scheduler-steps", "8",
       # custom chat template with better system prompt improves performance!
       "--chat-template", "/usr/app/chat-templates/tool_ace.jinja"
     ]
@@ -145,7 +145,7 @@ services:
       "--tool-call-parser", "minicpm",
       "--max-num-batched-tokens", "512",
       "--max-num-seqs", "256",
-      "--num-scheduler-steps", "1",
+      "--num-scheduler-steps", "8",
       # custom chat template with better system prompt improves performance!
       "--chat-template", "/usr/app/chat-templates/minicpm3_4b.jinja",
       "--trust-remote-code"
@@ -183,7 +183,7 @@ services:
       "--tool-call-parser", "mistral",
       "--max-num-batched-tokens", "512",
       "--max-num-seqs", "256",
-      "--num-scheduler-steps", "1",
+      "--num-scheduler-steps", "8",
       # custom chat template with better system prompt improves performance!
       "--chat-template", "/usr/app/chat-templates/mistral.jinja",
       "--trust-remote-code"
@@ -218,7 +218,7 @@ services:
       "--tool-call-parser", "internlm",
       "--max-num-batched-tokens", "512",
       "--max-num-seqs", "256",
-      "--num-scheduler-steps", "1",
+      "--num-scheduler-steps", "8",
       # custom chat template with better system prompt improves performance!
       "--chat-template", "/usr/app/chat-templates/internlm.jinja",
       "--trust-remote-code"

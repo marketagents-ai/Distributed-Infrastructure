@@ -16,7 +16,7 @@ services:
     "--max-model-len", "131072",
     "--max-num-batched-tokens", "512",
     "--max-num-seqs", "256",
-    "--num-scheduler-steps", "1"
+    "--num-scheduler-steps", "8"
     ]
     environment:
       - HUGGING_FACE_HUB_TOKEN=${HUGGINGFACE_TOKEN}
@@ -47,7 +47,7 @@ services:
     "--tool-call-parser", "hermes",
     "--max-num-batched-tokens", "512",
     "--max-num-seqs", "256",
-    "--num-scheduler-steps", "1"
+    "--num-scheduler-steps", "8"
     ]
     environment:
       - HUGGING_FACE_HUB_TOKEN=${HUGGINGFACE_TOKEN}
