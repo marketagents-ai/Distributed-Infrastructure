@@ -261,8 +261,8 @@ services:
       - distributed-inference-secure
     volumes:
       - grafana-storage-blacklight:/var/lib/grafana
-      - compose/configs/grafana/dashboards:/var/lib/grafana/dashboards
-      - compose/configs/grafana/provisioning:/etc/grafana/provisioning
+      - configs/grafana/dashboards:/var/lib/grafana/dashboards
+      - configs/grafana/provisioning:/etc/grafana/provisioning
     restart: unless-stopped
 
   text-embeddings-inference:
